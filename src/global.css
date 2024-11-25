@@ -1,0 +1,28 @@
+body {
+    background-color: var(--groen)
+}
+
+:root {
+
+	--goud: #D4AF37;
+	--bruin: #C9932E;
+	--groen: #173330;
+	--beige: #FFF4E0;
+	--rood: #BA5737;
+	--wit: white;
+	--zwart: black;
+	--licht-groen: #718355;
+
+}
+
+section {
+	max-width: 1200px;
+	margin: auto;
+}
+
+section > div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
