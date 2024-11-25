@@ -6,7 +6,7 @@
   let userData = null;
 
   // Spotify configuratie
-  const clientId = '8da8a022fefb4a22821b4f4889cb3054';
+  const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
   const redirectUri = 'http://localhost:5173/callback';
   const scopes = 'user-read-private user-read-email user-top-read user-read-recently-played user-read-playback-state';
 
