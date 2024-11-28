@@ -21,7 +21,7 @@ const isBrowser = typeof window !== 'undefined';
       accessToken = localStorage.getItem('spotify_access_token');
       if (accessToken) {
         const spotifyApi = new SpotifyWebApi();
-        spotifyApi.setAccessToken(accessToken);
+        spotifyApi.setAccessToken(accessToken); 
         spotifyApi.getMe().then((data) => {
           userData = data;
           isLoggedIn = true; // Gebruiker is ingelogd
@@ -65,8 +65,8 @@ const isBrowser = typeof window !== 'undefined';
     </div>
   {:else}
     <div class="welkom">
-      <h1>Welkom bij Charitfy</h1>
-      <h2>Ontdek jouw muziek universum</h2>
+      <h1>Welkom bij Chartify</h1>
+      <h2>Hoe ziet jouw muziekale universum eruit?</h2>
       <button on:click={login} class="login-button">Inloggen met Spotify</button>
     </div>
   {/if}
@@ -113,6 +113,7 @@ const isBrowser = typeof window !== 'undefined';
     border: var(--goud) 2px solid;
     transition: transform 0.25s ease-in-out, border-color 0.25s ease-in-out, color 0.25s ease-in-out;
     width: 50%;
+    background-color: transparent;
   }
 
   .login-button:hover {

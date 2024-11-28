@@ -113,8 +113,8 @@
     d3.timer(() => {
       bubbles.attr("transform", (_, i) => {
         const angle = (angles[i] += rotationSpeed);
-        const x = centerX + Math.cos((angle * Math.PI) / 185) * orbitRadiusX;
-        const y = centerY + Math.sin((angle * Math.PI) / 175) * orbitRadiusY;
+        const x = centerX + Math.cos((angle * Math.PI) / 183) * orbitRadiusX;
+        const y = centerY + Math.sin((angle * Math.PI) / 177) * orbitRadiusY;
         return `translate(${x}, ${y})`;
       });
     });
