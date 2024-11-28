@@ -2,15 +2,19 @@
   import { onMount } from "svelte";
   import SpotifyWebApi from "spotify-web-api-js";
 
+  export let isLoggedIn = false; // Deze prop wordt vanuit de parent doorgegeven
+
   let accessToken = null;
   let userData = null;
 
   // Spotify configuratie
-  const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
-  const redirectUri = 'http://localhost:5173/callback';
-  const scopes = 'user-read-private user-read-email user-top-read user-read-recently-played user-read-playback-state';
+// Spotify configuratie
+const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+const scopes = import.meta.env.VITE_SPOTIFY_SCOPES;
 
-  const isBrowser = typeof window !== 'undefined';
+const isBrowser = typeof window !== 'undefined';
+
 
   onMount(() => {
     if (isBrowser) {
@@ -20,28 +24,30 @@
         spotifyApi.setAccessToken(accessToken);
         spotifyApi.getMe().then((data) => {
           userData = data;
+          isLoggedIn = true; // Gebruiker is ingelogd
         }).catch((err) => {
           console.error('Fout bij ophalen van gebruikersgegevens:', err);
+          isLoggedIn = false; // Zet ingelogde status naar false bij fout
         });
+      } else {
+        isLoggedIn = false; // Geen access token betekent niet ingelogd
       }
     }
   });
 
   function logout() {
-  if (isBrowser) {
-    // Verwijder de token uit localStorage
-    localStorage.removeItem('spotify_access_token');
+    if (isBrowser) {
+      // Verwijder de token uit localStorage
+      localStorage.removeItem('spotify_access_token');
     
-    // Reset de userData naar null
-    userData = null;
+      // Reset de userData naar null
+      userData = null;
 
-    // Forceer een herlaad van de pagina
-    window.location.reload(); // Hiermee wordt alles opnieuw geladen en zou de app volledig schoon moeten zijn.
+      // Zet isLoggedIn naar false en forceer herladen van de pagina
+      isLoggedIn = false;
+      window.location.reload();
+    }
   }
-}
-
-
-
 
   function login() {
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}`;
@@ -52,18 +58,18 @@
 </script>
 
 <main>
-    {#if userData}
+  {#if userData}
     <div class="welkom-ingelogd">
       <h1>Hi, {userData.display_name}!</h1>
       <button on:click={logout} class="login-button">Uitloggen</button>
     </div>
-    {:else}
+  {:else}
     <div class="welkom">
       <h1>Welkom bij Charitfy</h1>
       <h2>Ontdek jouw muziek universum</h2>
       <button on:click={login} class="login-button">Inloggen met Spotify</button>
     </div>
-    {/if}
+  {/if}
 </main>
 
 <style>
@@ -144,6 +150,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    height: 100vh;
   }
 
   .welkom-ingelogd {

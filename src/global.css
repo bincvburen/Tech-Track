@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap');
+
+
 body {
     background-color: var(--groen)
 }
@@ -13,16 +17,4 @@ body {
 	--zwart: black;
 	--licht-groen: #718355;
 
-}
-
-section {
-	max-width: 1200px;
-	margin: auto;
-}
-
-section > div {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
 }

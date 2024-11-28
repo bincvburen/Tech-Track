@@ -1,131 +1,123 @@
 <script>
   import { onMount } from "svelte";
   import * as d3 from "d3";
-  export let trackType = "recent";  // Ontvangt trackType als prop van bovenaf
+  import { fetchTracks } from "../lib/fetch.js"; // Import de nieuwe functie
+  import { generateTrackLabel } from '../lib/utils.js'; // Pas het pad aan naar jouw projectstructuur
+
+  export let trackType = "top";
+  export let trackLimit = 20;
+  export let trackTerm = "long_term";
 
   let tracks = [];
   let rotationInterval;
 
-  onMount(() => {
-    fetchTracks(); // Laad de tracks bij het laden van de component
+  onMount(async () => {
+    tracks = await fetchTracks(trackType, trackLimit, trackTerm); // Gebruik de geïmporteerde functie
+    createChart();
+    window.addEventListener("resize", createChart);
   });
 
-  // Fetch de tracks op basis van de selectie
-  const fetchTracks = async () => {
-    const accessToken = localStorage.getItem("spotify_access_token");
-    if (accessToken) {
-      try {
-        const url = trackType === "top"
-          ? "https://api.spotify.com/v1/me/top/tracks?limit=20"
-          : "https://api.spotify.com/v1/me/top/tracks?limit=5";
-
-        const response = await fetch(url, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const { items } = await response.json();
-        
-        // Verwerk de tracks
-        tracks = items.map(({ track, name, external_urls, album, preview_url, popularity }) => ({
-          name: track ? track.name : name,
-          url: (track ? track.external_urls : external_urls).spotify,
-          image: track ? track.album.images[0].url : album.images[0].url,
-          previewUrl: track ? track.preview_url : preview_url,
-          radius: Math.max(40, (track ? track.popularity : popularity) * 1.5), // Grotere bubbels
-        }));
-
-        createChart();
-      } catch (error) {
-        console.error("Error fetching tracks:", error);
-      }
-    }
-  };
-
-  // Creëer de grafiek
   const createChart = () => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    const svg = d3.select("#bubble-chart")
-      .attr("width", width)
-      .attr("height", height);
+    const width = innerWidth;
+    const height = innerHeight - 100;
+    const centerX = width / 2;
+    const centerY = height / 2;
 
-    svg.append("text")
-      .attr("x", width / 2)
-      .attr("y", height / 2)
+    const svg = d3.select("#bubble-chart").attr("width", width).attr("height", height);
+    svg.selectAll("*").remove();
+
+    svg
+      .append("text")
+      .attr("x", centerX)
+      .attr("y", centerY)
       .attr("text-anchor", "middle")
       .attr("font-size", "36px")
       .attr("fill", "#FFFFFF")
       .attr("font-weight", "bold")
-      .text(trackType === "top" ? "Top Tracks" : "Recent Tracks");
+      .text(() => generateTrackLabel(trackType, trackTerm, tracks.length));
 
-    const bubbles = svg.selectAll("g")
+    const bubbles = svg
+      .selectAll("g")
       .data(tracks)
       .enter()
       .append("g")
-      .attr("transform", `translate(${width / 2}, ${height / 2})`)
       .on("mouseenter", (event, d) => handleMouseEnter(event, d))
       .on("mouseleave", (event, d) => handleMouseLeave(event, d));
 
-    bubbles.append("circle")
-      .attr("r", d => d.radius)
+    bubbles
+      .append("circle")
+      .attr("r", (d) => d.radius)
       .attr("fill", "#8D99AE");
 
-    bubbles.append("clipPath")
-      .attr("id", (d, i) => `clip${i}`)
+    bubbles
+      .append("clipPath")
+      .attr("id", (_, i) => `clip${i}`)
       .append("circle")
-      .attr("r", d => d.radius)
-      .attr("cx", 0)
-      .attr("cy", 0);
+      .attr("r", (d) => d.radius);
 
-    bubbles.append("image")
-      .attr("x", d => -d.radius)
-      .attr("y", d => -d.radius)
-      .attr("width", d => d.radius * 2)
-      .attr("height", d => d.radius * 2)
-      .attr("xlink:href", d => d.image)
-      .attr("clip-path", (d, i) => `url(#clip${i})`);
+    bubbles
+      .append("image")
+      .attr("x", (d) => -d.radius)
+      .attr("y", (d) => -d.radius)
+      .attr("width", (d) => d.radius * 2)
+      .attr("height", (d) => d.radius * 2)
+      .attr("xlink:href", (d) => d.image)
+      .attr("clip-path", (_, i) => `url(#clip${i})`)
+      .on("click", (event, d) => {
+        const trackId = d.url.split("/").pop();
+        const trackUrl = `spotify:track:${trackId}`;
+        window.location.href = trackUrl;
+      });
 
-    startRotation();
+    startRotation(bubbles, centerX, centerY);
   };
 
   const handleMouseEnter = (event, d) => {
-    d3.select(event.currentTarget)
-      .select("circle")
+    d3.select(event.currentTarget).select("circle").transition()
+      .attr("r", d.radius * 1.2)
+      .duration(200);  // Vloeiende overgang naar een grotere bubbel
+
+    d3.select(event.currentTarget).select("image")
+      // Start de rotatie van de afbeelding zelf met een lange duur
+      .style("opacity", 1)
       .transition()
-      .attr("r", d.radius * 1.2);
+      .duration(20000)  // Duur van de rotatie
+      .ease(d3.easeLinear)
+      .attr("transform", "rotate(180)");
 
-    if (rotationInterval) rotationInterval.stop();
-
-    const audio = new Audio(d.previewUrl);
-    audio.play();
-    d.audio = audio;
+    rotationSpeed = 0.005;  // Snellere rotatie van de banen tijdens hover
   };
+  
 
   const handleMouseLeave = (event, d) => {
-    d3.select(event.currentTarget)
-      .select("circle")
-      .transition()
-      .attr("r", d.radius);
+    // Herstel de grootte van de bubbel
+    d3.select(event.currentTarget).select("circle").transition().attr("r", d.radius);
 
-    startRotation();
+    // Herstel de rotatie van de afbeelding zelf
+    d3.select(event.currentTarget).select("image").transition()
+      .duration(2000)  // Duur van de rotatie
+      .ease(d3.easeLinear)
+      .attr("transform", "rotate(-20)")  // Draai de afbeelding 180 graden
+      .style("opacity", 0.25);  // Verlaag de opacity om de afbeelding donkerder te maken
 
-    if (d.audio) {
-      d.audio.pause();
-      d.audio.currentTime = 0;
-    }
+    rotationSpeed = 0.2; // Snellere rotatie tijdens hover
   };
 
-  const startRotation = () => {
-    rotationInterval = d3.interval(() => {
-      d3.selectAll("#bubble-chart g").attr("transform", (d, i) => {
-        const angle = (Date.now() / (5000 + i * 300)) % 360;
-        const orbitRadius = i % 2 === 0 ? 300 : 450;
-        const x = window.innerWidth / 2 + Math.cos(angle) * orbitRadius;
-        const y = window.innerHeight / 2 + Math.sin(angle) * orbitRadius;
+  let rotationSpeed = 0.2;
+
+  const startRotation = (bubbles, centerX, centerY) => {
+    const orbitRadiusX = innerWidth / 3;
+    const orbitRadiusY = innerHeight / 4;
+    const angles = tracks.map(() => Math.random() * 360);
+
+    d3.timer(() => {
+      bubbles.attr("transform", (_, i) => {
+        const angle = (angles[i] += rotationSpeed);
+        const x = centerX + Math.cos((angle * Math.PI) / 185) * orbitRadiusX;
+        const y = centerY + Math.sin((angle * Math.PI) / 175) * orbitRadiusY;
         return `translate(${x}, ${y})`;
       });
-    }, 20);
+    });
   };
 </script>
 

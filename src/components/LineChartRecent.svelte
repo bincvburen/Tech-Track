@@ -13,7 +13,7 @@
   
       try {
         // Haal recent afgespeelde nummers op
-        const recentTracksResponse = await fetch("https://api.spotify.com/v1/me/player/recently-played?limit=50", {
+        const recentTracksResponse = await fetch("https://api.spotify.com/v1/me/player/recently-played?limit=10", {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
         const recentTracksData = await recentTracksResponse.json();
