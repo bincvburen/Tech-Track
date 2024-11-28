@@ -68,7 +68,7 @@
     <div>
       <select id="track-term" bind:value={trackTerm} class="chartkeuze" disabled={trackType === 'recent'} on:change={handleSelectChange}>
         <option disabled>Periode</option>
-        <option value="long_term">Afgelopen jaar</option>
+        <option value="long_term">Allertijden</option>
         <option value="medium_term">Afgelopen half jaar</option>
         <option value="short_term">Afgelopen maand</option>
       </select>

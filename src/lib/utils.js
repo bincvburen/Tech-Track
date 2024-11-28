@@ -13,7 +13,7 @@ export const generateTrackLabel = (trackType, trackTerm, trackCount) => {
           ? "in de afgelopen maand"
           : trackTerm === "medium_term"
           ? "in het afgelopen half jaar"
-          : "in het afgelopen jaar";
+          : "aller tijden";
     }
   
     return `${trackCount} ${typeText} ${termText}`.trim(); // Combineer trackCount, typeText en termText
