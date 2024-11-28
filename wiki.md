@@ -1,18 +1,7 @@
 
----
-# Week van 11 oktober
-
-### SVG's
-
-**De voordelen van SVG's**  
-SVG heeft verschillende problemen opgelost. We beginnen met de schaalbaarheid. Een van de grootste problemen die SVG oploste is de mogelijkheid om afbeeldingen en grafische elementen te schalen zonder verlies van kwaliteit. Traditionele bitmapafbeeldingen (zoals JPEG of PNG) verliezen hun scherpte wanneer ze vergroot worden, omdat ze bestaan uit een vaste set pixels. SVG gebruikt daarentegen wiskundige formules om vormen te maken, waardoor afbeeldingen scherp blijven, ongeacht hun grootte. [MDN Web Docs - Metadata in SVG](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/metadata)
-
-Ten tweede kunnen SVG's meer metadata bevatten zoals beschrijvingen, titels, en copyrightinformatie via het en element. Dit verbetert toegankelijkheid door screen readers en draagt bij aan betere SEO, omdat zoekmachines de tekst in SVG-bestanden kunnen indexeren. Deze metadata biedt ook context voor auteursrechten en hergebruik van de afbeelding. [MDN Web Docs - Metadata in SVG](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/metadata)
-
-
 # Information Design Tech Track
 
-In deze wiki documenteer ik mijn technisch onderzoek, waarbij ik mijn keuzes verdedig, alternatieven bespreek en mijn voortgang en uitdagingen tijdens de ontwikkeling van mijn applicatie uitgebreid beschrijf.
+In deze wiki documenteer ik mijn technisch onderzoek, waarbij ik mijn keuzes verdedig, alternatieven bespreek en mijn voortgang en uitdagingen tijdens de ontwikkeling van mijn applicatie uitgebreid beschrijf. Open het [ReadMe Bestand](README.md) om de app te gebruiken.
 
 ## Concept
 
@@ -21,7 +10,7 @@ In deze wiki documenteer ik mijn technisch onderzoek, waarbij ik mijn keuzes ver
 #### Muziek
 Muziek is al van jongs af aan een grote passie van me, wat niet vreemd is aangezien ik opgegroeid ben in een muzikaal gezin. Zelf ben ik DJ en draai ik regelmatig op de leukste feestjes. Veel inspiratie haal ik dan ook van Spotify. Elk jaar kijk ik uit naar mijn Spotify Wrapped, en op een gegeven moment vroeg ik me af of ik iets met al die data kon doen. Zo ontdekte ik de Spotify API, waarmee ik allerlei gegevens uit je account kan halen en op een visuele manier kan presenteren.
 
-#### Vluchten
+#### Vliegtuigen
 Vliegen is voor mij iets wat ik regelmatig doe, aangezien mijn moeder senior purser is. Het was altijd een avontuur om samen met haar op verschillende plekken te komen. Door die ervaring ben ik geïnteresseerd geraakt in alles rondom vliegvelden en luchtvaart. Onlangs ontdekte ik de Schiphol API, waarmee je allerlei informatie over vluchten kunt ophalen. Het leek me een interessante uitdaging om met deze data te werken en deze visueel weer te geven.
 
 ## Onderzoeksvraag
@@ -348,6 +337,100 @@ De lijn heb ik gemaakt met behulp van de [d3-shape line module](https://d3js.org
     };
 
 ```
+
+### Interacties
+
+## Hoveren
+
+Wanneer een gebruiker over een punt of afbeelding hovert, komen er verschillende gegevens naar voren. Deze gegevens zijn:
+
+- Duur van het nummer
+- Titel van het nummer
+- Artiest van het nummer
+- Het nummer speelt af
+- Het label op de X-as verdwijnt
+
+De volgende functies zorgen ervoor dat dit gebeurt:
+
+```javascript
+const handleMouseEnter = (_, d) => {
+  svg.selectAll(".hover-labels").remove();
+  svg.select(".x-axis-label").style("visibility", "hidden"); 
+  addHoverLabels(d);
+
+  if (currentAudio) currentAudio.pause();
+  currentAudio = new Audio(d.previewUrl);
+  currentAudio.play();
+};
+
+const handleMouseLeave = () => {
+  svg.selectAll(".hover-labels").remove();
+  svg.select(".x-axis-label").style("visibility", "visible");
+  if (currentAudio) currentAudio.pause();
+};
+```
+
+### Klik Interactie
+
+De klik-interactie in deze visualisatie zorgt ervoor dat wanneer een gebruiker op een punt klikt, de bijbehorende track wordt geopend in Spotify. Dit gebeurt door de `click` event listener die aan elk punt is gekoppeld. De volgende acties worden uitgevoerd:
+
+  - De URL van het nummer wordt opgehaald uit de data (`d.url`).
+  - De `trackId` wordt uit de URL van de track gehaald. Dit wordt gedaan door de laatste segmenten van de URL (na de laatste '/') te nemen.
+  - Vervolgens wordt een `trackUrl` gecreëerd in het Spotify URI-formaat (`spotify:track:{trackId}`).
+  - De browser wordt vervolgens omgeleid naar de Spotify pagina van het nummer door `window.location.href = trackUrl` uit te voeren.
+
+  Deze methode zorgt ervoor dat het nummer direct begint af te spelen als je er op klikt.
+
+```javascript
+const addPoints = (data, color, key) =>
+  svg
+    .selectAll(".circle")
+    .data(data)
+    .join("circle")
+    .attr("class", "circle")
+    .attr("cx", d => x(d.name) + x.bandwidth() / 2)
+    .attr("cy", d => y(d[key]))
+    .attr("r", 5)
+    .attr("fill", color)
+    .on("mouseenter", handleMouseEnter)
+    .on("mouseleave", handleMouseLeave)
+    .on("click", (event, d) => {
+      // Haal de trackId uit de URL
+      const trackId = d.url.split("/").pop();
+      const trackUrl = `spotify:track:${trackId}`;
+      
+      // Verplaats de gebruiker naar de Spotify trackpagina
+      window.location.href = trackUrl;
+    });
+```
+
+## Feedback
+
+Op 19 november heb ik feedback ontvangen van Sep en Camil.
+
+### Algemene Feedback
+- Combineer je vier Svelte componenten tot twee, waarbij de fetch dynamisch is.
+- Over welke tijdsperiode gaat het?
+- Voeg een titel toe aan de visualisatie.
+- Laat gebruikers het aantal tracks kiezen.
+
+### Bubbelchart
+- Zorg dat de bubbels langzamer gaan wanneer je erover hovert.
+- De bubbels vallen deels buiten beeld.
+- Het moet mogelijk zijn om te zien welke nummers je al hebt beluisterd.
+
+### Linechart
+- Voeg labels toe op de X- en Y-as voor verduidelijking.
+- Zorg dat de hover ook werkt op de punten.
+
+### Positief
+- De code is duidelijk geschreven en goed te volgen.
+- Annotaties zijn duidelijk.
+
+Alle punten heb ik verwerkt en ik ben blij dat ze deze hebben aangekaart. Zelf kijk je toch over dingen heen als je er continu mee bezig bent. Vooral het verbeteren van de fetch en het verkleinen van de componenten vond ik een zeer goede vooruitgang. De rest van de feedback maakt de gebruikerservaring beter en zijn vooral details.
+
+Nadat ik de componenten opnieuw had ingedeeld en de fetch dynamisch heb kunnen maken, kon ik meerdere filteropties toevoegen. Ik kreeg al snel de smaak te pakken en van één filteroptie kwamen er al snel drie. Deze filteropties heb ik eerder in het document al uitgelegd.
+
 
 
 ```javascript
