@@ -10,7 +10,7 @@
   import { fetchTracks } from "../lib/fetch.js";
   import { generateTrackLabel } from '../lib/utils.js';
 
-  // Exporteren van de variabelen. 
+  // Exporteren van de variabelen
   export let trackType = "top";
   export let trackLimit = 20;
   export let trackTerm = "long_term";
@@ -124,7 +124,7 @@
     d3.select(event.currentTarget).select("image").transition()
       .duration(2000)  
       .ease(d3.easeLinear)
-      .attr("transform", "rotate(-20)") 
+      .attr("transform", "rotate(0)") 
       .style("opacity", 0.25);  
 
     rotationSpeed = 0.2; 
