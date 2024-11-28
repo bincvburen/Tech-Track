@@ -406,6 +406,17 @@ const addPoints = (data, color, key) =>
     });
 ```
 
+## Hulp bij eerste keer inloggen
+
+Wanneer je voor het eerst inlogt krijg je de onderstaande help tekst te zien om snel van start te gaan. Dit element verdwijnt nadat je een van de filteropties voor het eerst gebruikt. 
+
+```html
+<div class="help-box">
+  <h2>Welkom! Kies een visualisatie en filter naar jouw wens</h2>
+  <p>Je kunt de visualisatie aanpassen op het type tracks, de hoeveelheid en over welke tijdsperiode. Op zoek naar meer inzicht in je tracks? Wissel dan 'Universum' naar 'Inzicht'. Veel plezier!</p>
+</div>
+```
+
 ## Feedback
 
 Op 19 november heb ik feedback ontvangen van Sep en Camil.
@@ -450,7 +461,7 @@ Een inzichtelijke grafiek die laat zien hoe lang de nummers duren, hoe energiek 
 
 # Reflectie
 
-### Reflectie
+### Terugblik op het project
 
 Tijden dit project heb ik mijn passie voor muziek gecombineerd met mijn technische CMD kennis. Door de Spotify API te integreren, heb ik niet alleen de mogelijkheden van de API ontdekt, maar ook mijn kennis van data visualisatie kunnen uitbreiden, vooral met behulp van D3.js. Iets wat totaal nieuw voor mij was. Het creëren van interactieve visualisaties, zoals de bubble- en lijngrafieken, bood me de kans om complexe data op een gebruiksvriendelijke manier te presenteren. 
 

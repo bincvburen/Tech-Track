@@ -1,6 +1,5 @@
 // Fetch functie om data op te halen van de Spotify API en deze vervolgens te exporteren
 // Aan het begin wordt er gecontroleerd of er een access token is opgeslagen in localStorage
-
 export const fetchTracks = async (trackType, trackLimit, trackTerm) => {
   const accessToken = localStorage.getItem("spotify_access_token");
   if (!accessToken) {
