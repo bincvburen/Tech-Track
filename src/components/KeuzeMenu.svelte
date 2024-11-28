@@ -161,10 +161,4 @@
     margin-top: -3em;
   }
   
-  label {
-    font-size: 1rem;
-    margin-right: 0.5em;
-    font-weight: bold;
-    color: #2ECC71;
-  }
 </style>

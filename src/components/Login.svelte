@@ -96,7 +96,7 @@ const isBrowser = typeof window !== 'undefined';
     scroll-behavior: smooth;
   }
 
-  h1, h2, h3 {
+  h1, h2 {
     font-family: "Merriweather", serif;
   }
 
@@ -107,11 +107,6 @@ const isBrowser = typeof window !== 'undefined';
 
   h2 {
     font-size: 40px;
-    color: var(--beige);
-  }
-
-  h3 {
-    font-size: 25px;
     color: var(--beige);
   }
 
