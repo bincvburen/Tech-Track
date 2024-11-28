@@ -1,16 +1,18 @@
 
 # Information Design Tech Track
 
-In deze wiki documenteer ik mijn technisch onderzoek, waarbij ik mijn keuzes verdedig, alternatieven bespreek en mijn voortgang en uitdagingen tijdens de ontwikkeling van mijn applicatie uitgebreid beschrijf. Open het [ReadMe Bestand](README.md) om de app te gebruiken.
+In deze wiki documenteer ik mijn technisch onderzoek, waarbij ik mijn keuzes uitleg en mijn voortgang en uitdagingen tijdens de ontwikkeling van mijn applicatie beschrijf. Open het [ReadMe Bestand](README.md) om de app te gebruiken. Ik leg de code stuk voor stuk uit en neem deze met je door.
 
 ## Concept
 
 ### Interesse voor mijn concept
 
+Voordat ik begon met de opdracht twijfelde ik tussen twee concepten. Uiteindelijk heb ik voor muziek gekozen, omdat de Spotify API en vooral de dynamiek in de gegevens mij erg interessant leek.
+
 #### Muziek
 Muziek is al van jongs af aan een grote passie van me, wat niet vreemd is aangezien ik opgegroeid ben in een muzikaal gezin. Zelf ben ik DJ en draai ik regelmatig op de leukste feestjes. Veel inspiratie haal ik dan ook van Spotify. Elk jaar kijk ik uit naar mijn Spotify Wrapped, en op een gegeven moment vroeg ik me af of ik iets met al die data kon doen. Zo ontdekte ik de Spotify API, waarmee ik allerlei gegevens uit je account kan halen en op een visuele manier kan presenteren.
 
-#### Vliegtuigen
+#### Vliegen
 Vliegen is voor mij iets wat ik regelmatig doe, aangezien mijn moeder senior purser is. Het was altijd een avontuur om samen met haar op verschillende plekken te komen. Door die ervaring ben ik geïnteresseerd geraakt in alles rondom vliegvelden en luchtvaart. Onlangs ontdekte ik de Schiphol API, waarmee je allerlei informatie over vluchten kunt ophalen. Het leek me een interessante uitdaging om met deze data te werken en deze visueel weer te geven.
 
 ## Onderzoeksvraag
@@ -39,7 +41,7 @@ Per nummer haal ik de volgende gegevens op:
 - Energie-niveau
 - Populariteit
 
-### Voorbeeld van de gegevens
+### Voorbeeld van een `Track Object`
 
 ```json
 {
@@ -431,12 +433,27 @@ Alle punten heb ik verwerkt en ik ben blij dat ze deze hebben aangekaart. Zelf k
 
 Nadat ik de componenten opnieuw had ingedeeld en de fetch dynamisch heb kunnen maken, kon ik meerdere filteropties toevoegen. Ik kreeg al snel de smaak te pakken en van één filteroptie kwamen er al snel drie. Deze filteropties heb ik eerder in het document al uitgelegd.
 
+# Eindproduct 
+
+Het eindproduct staat [live op mijn Vercel site.](https://vercel.com/bincs-projects/tech-track)
+
+#### BubbleChart (het Universum)
+Een speelse visualisatie van jouw geselecteerde Spotify tracks met interactieve elementen
+
+![BubbleChart - Het Universum](https://github.com/bincvburen/Tech-Track/blob/main/static/images/bubble.png)
+
+#### LineChart (Inzicht)
+Een inzichtelijke grafiek die laat zien hoe lang de nummers duren, hoe energiek en dansbaar ze zijn. 
+
+![LineChart - Voor meer inzicht](https://github.com/bincvburen/Tech-Track/blob/main/static/images/line.png)
 
 
-```javascript
+# Reflectie
 
-```
+### Reflectie
 
-```javascript
+Tijden dit project heb ik mijn passie voor muziek gecombineerd met mijn technische CMD kennis. Door de Spotify API te integreren, heb ik niet alleen de mogelijkheden van de API ontdekt, maar ook mijn kennis van data visualisatie kunnen uitbreiden, vooral met behulp van D3.js. Iets wat totaal nieuw voor mij was. Het creëren van interactieve visualisaties, zoals de bubble- en lijngrafieken, bood me de kans om complexe data op een gebruiksvriendelijke manier te presenteren. 
 
-```
+De grootste uitdaging was het inloggen van verschillende gebruikers. Ik heb hier ontzettend lang mee geworsteld, tot op de dag van vandaag. Uiteindelijk bleek het niet zo complex te zijn als ik dacht. Daarnaast was woensdag 28 november een flinke tegenslag, omdat Spotify besloot haar endpoints aan te passen. Dit zorgde ervoor dat de lijngrafiek volledig kapot ging, en features zoals het tonen van aanbevelingen en het afspelen van nummers tijdens het hoveren onbruikbaar werden. Ik baalde hier enorm van, en het kostte me veel tijd om te achterhalen waar het probleem lag. Na een [post op de Spotify Community](https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api) werd het duidelijk dat dit de nieuwe richting was die Spotify was ingeslagen. Helaas zijn veel mensen hierdoor getroffen, zoals te lezen [is in dit topic.](https://community.spotify.com/t5/Spotify-for-Developers/Changes-to-Web-API/td-p/6540414) Net voor de deadline heb ik mijn visualisaties kunnen aanpassen en ben ik alsnog heel blij met het eindresultaat.
+
+Mijn app stelt gebruikers in staat om hun luistergedrag te analyseren op een manier die zowel visueel als interactief is. Het project heeft me niet alleen technisch uitgedaagd, maar ook mijn vermogen om creatieve oplossingen te bedenken bij het werken met real-time data versterkt. 

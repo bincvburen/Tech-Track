@@ -67,8 +67,8 @@
 
 {#if helpTextVisible}
 <div class="help-box">
-  <h2 class="help-tekst">Welkom! Kies een visualisatie en filter naar jouw wens</h2>
-  <p class="help-tekst">Je kunt de visualisatie aanpassen op het <strong>type tracks</strong>, de <strong>hoeveelheid</strong> en over welke <strong>tijdsperiode.</strong> Op zoek naar <strong>meer inzicht in je tracks?</strong> Wissel dan 'Universum' naar 'Inzicht'. Veel plezier!</p>
+  <h2>Welkom! Kies een visualisatie en filter naar jouw wens</h2>
+  <p>Je kunt de visualisatie aanpassen op het <strong>type tracks</strong>, de <strong>hoeveelheid</strong> en over welke <strong>tijdsperiode.</strong> Op zoek naar <strong>meer inzicht in je tracks?</strong> Wissel dan 'Universum' naar 'Inzicht'. Veel plezier!</p>
 </div>
 {/if}
 
@@ -98,7 +98,8 @@
     margin: 2em auto;
   }
 
-  .help-tekst {
+  .help-box p,
+  .help-box h2 {
     text-align: center;
     color: var(--beige);
     max-width: 70%;
