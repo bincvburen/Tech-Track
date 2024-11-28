@@ -1,18 +1,27 @@
 <script>
+  ////////////////////////
+  // Basis Setup
+  ///////////////////////
+
+  // Importeren van Svelte functies en D3
   import BubbleChart from '../components/BubbleChart.svelte';
   import LineChart from '../components/LineChart.svelte';
   import "../global.css"; // Importeer de globale CSS
 
   // Standaardwaarden voor de selecties
-  let chartType = 'BubbleChart'; // Universum of Inzicht
-  let trackType = 'top'; // Toptracks of Recent afgespeeld
-  let trackLimit = '20'; // Toptracks of Recent afgespeeld
-  let trackTerm = 'long_term'; // Toptracks of Recent afgespeeld
+  let chartType = 'BubbleChart'; 
+  let trackType = 'top'; 
+  let trackLimit = '20'; 
+  let trackTerm = 'long_term'; 
+
+  ////////////////////////
+  // Selectie Logica
+  ///////////////////////
 
   // Variabele om te controleren of de helptekst zichtbaar moet zijn
   let helpTextVisible = true;
 
-  // Update logica voor trackTerm afhankelijk van trackType
+  // Zichtbaarheid van de trackTerm selectie
   function handleTrackTypeChange(event) {
     if (event.target.value === 'recent') {
       document.getElementById('track-term').disabled = true; // Track-term select is niet aanpasbaar
@@ -20,16 +29,17 @@
       document.getElementById('track-term').disabled = false; // Track-term select is aanpasbaar
     }
 
-    // Verberg de helptekst zodra er iets is aangepast
+    // Verberg de helptekst na een aanpassing
     helpTextVisible = false;
   }
 
-  // Voeg een algemene wijzigingsfunctie toe voor andere selecties
+  // Verberg de helptekst zodra er iets is aangepast
   function handleSelectChange() {
-    helpTextVisible = false; // Verberg de helptekst zodra een selectie is aangepast
+    helpTextVisible = false; 
   }
 </script>
 
+<!-- Selectievakken -->
 <section class="keuze">
     <div>
       <select id="chart-type" bind:value={chartType} class="chartkeuze" on:change={handleSelectChange}>
@@ -65,6 +75,7 @@
     </div>
 </section>
 
+<!-- Helptekst zichtbaarheid -->
 {#if helpTextVisible}
 <div class="help-box">
   <h2>Welkom! Kies een visualisatie en filter naar jouw wens</h2>
@@ -73,13 +84,14 @@
 {/if}
 
 <!-- Toon component op basis van de keuze -->
+ <!-- Herlaadt de grafiek als een van de Key waarden verandert of de visualisatie wordt aangepast -->
 <section class="chart">
   {#if chartType === 'BubbleChart'}
-    {#key `${trackType}-${trackLimit}-${trackTerm}`}  <!-- key met trackType, trackLimit en trackTerm -->
+    {#key `${trackType}-${trackLimit}-${trackTerm}`} 
       <BubbleChart {trackType} {trackLimit} {trackTerm} />
     {/key}
   {:else if chartType === 'LineChart'}
-    {#key `${trackType}-${trackLimit}-${trackTerm}`}  <!-- key met trackType, trackLimit en trackTerm -->
+    {#key `${trackType}-${trackLimit}-${trackTerm}`}  
       <LineChart {trackType} {trackLimit} {trackTerm} />
     {/key}
   {/if}

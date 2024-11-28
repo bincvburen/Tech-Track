@@ -4,20 +4,23 @@
   ///////////////////////
 
   // Importeren van Svelte functies en D3
+  // Importeren van fetchTracks en generateTrackLabel
   import { onMount } from "svelte";
   import * as d3 from "d3";
   import { fetchTracks } from "../lib/fetch.js"; // Import de nieuwe functie
   import { generateTrackLabel } from '../lib/utils.js'; // Pas het pad aan naar jouw projectstructuur
 
+  // Exporteren van de variabelen
   export let trackType = "recent";
   export let trackLimit = 30;
   export let trackTerm = 'long_term';
 
-
+  // Variabele om de tracks in op te slaan
   let tracks = [];
 
+    // Indien het component geladen is, haal de tracks op en maak de grafiek
   onMount(async () => {
-    tracks = await fetchTracks(trackType, trackLimit, trackTerm); // Gebruik de geïmporteerde functie
+    tracks = await fetchTracks(trackType, trackLimit, trackTerm); 
     createChart();
     window.addEventListener("resize", createChart);
   });
@@ -31,6 +34,9 @@
     const width = Math.max(1200, tracks.length * 80) - margin.left - margin.right;
     const height = innerHeight - 375;
 
+    // Maak een container voor de grafiek
+    // Voeg een div toe voor horizontaal scrollen
+    // Voeg een SVG toe met de juiste afmetingen
     const container = d3.select("#chart-container").html("");
     const svg = container
       .append("div")
@@ -42,6 +48,7 @@
       .append("g")
       .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
+      // Titel van de grafiek
       svg
   .append("text")
   .attr("x", margin.left - 90) // Zet de tekst een beetje naar rechts van de linker marge
@@ -65,6 +72,7 @@
       .range([height, 0]);
 
 // Voeg de X-as en Y-as toe
+// Voeg de labels toe aan de X-as en Y-as
 const addAxis = () => {
   svg.append("g")
     .call(d3.axisBottom(x).tickFormat(""))
@@ -98,9 +106,6 @@ svg.append("text")
     .text("Duur in seconden →");
 };
 
-
-
-
     // Voeg een lijn toe voor de duur van de tracks
     const addLine = (data, color, key) => {
       const line = svg
@@ -122,7 +127,9 @@ svg.append("text")
         .attr("stroke-dashoffset", 0);
     };
 
-    // Voeg punten toe
+    // Voeg punten toe voor de duur van de tracks
+    // Voeg een click event toe om de track te openen in Spotify
+    // Voeg een hover event toe om extra informatie te tonen
     const addPoints = (data, color, key) =>
       svg
         .selectAll(".circle")
@@ -142,6 +149,8 @@ svg.append("text")
       });
 
     // Voeg albumhoes toe op de X-as
+    // Voeg een click event toe om de track te openen in Spotify
+    // Voeg een hover event toe om extra informatie te tonen
     const addImagesOnXAxis = () => {
       svg.selectAll(".x-axis-images")
         .data(tracks)
@@ -160,7 +169,7 @@ svg.append("text")
         window.location.href = trackUrl;
       });
 
-      // Voeg labels toe aan de nummers
+      // Voeg labels toe onder de nummers
       svg.selectAll(".x-axis-labels")
         .data(tracks)
         .join("text")
@@ -175,17 +184,23 @@ svg.append("text")
     };
 
     // Hover effecten voor extra informatie
+    // Toon extra informatie over de track
+    // Verberg de X-as label
+    // Speel het nummer af
     const handleMouseEnter = (_, d) => {
       svg.selectAll(".hover-labels").remove();
       svg.select(".x-axis-label").style("visibility", "hidden"); 
       addHoverLabels(d);
     };
 
+    // Omgekeerde van handleMouseEnter
     const handleMouseLeave = () => {
       svg.selectAll(".hover-labels").remove();
       svg.select(".x-axis-label").style("visibility", "visible");
     };
 
+    // Voeg tekstlabels toe voor extra informatie
+    // Deze labels worden getoond bij het hoveren over een track
     const addTextLabel = (xPos, yPos, text, fontSize, color) => {
       svg.append("text")
         .attr("x", xPos)
@@ -198,21 +213,26 @@ svg.append("text")
         .text(text);
     };
 
+    // Voeg hover labels toe voor extra informatie
+    // De labels bevatten de naam, artiest en duur van de track
     const addHoverLabels = d => {
       const xPos = x(d.name) + x.bandwidth() / 2;
       const yPos = height + 120;
 
+      // Voeg de naam en artiest toe
       addTextLabel(xPos, yPos, `💿 ${d.name}`, "14px", "#F39C12");
       addTextLabel(xPos, yPos + 20, `🕺 ${d.artist}`, "12px", "#3498DB");
 
+      // Bereken de duur in minuten en seconden
       const minutes = Math.floor(d.duration / 60);
       const seconds = Math.floor(d.duration % 60);
       const formattedDuration = seconds === 0 ? `${minutes} minuten` : `${minutes} minuten en ${seconds} seconden`;
 
+      // Voeg de duur toe
       addTextLabel(xPos - x.bandwidth() / 10, y(d.duration) + 20, `${formattedDuration} dansen! 🪩`, "16px", "#2ECC71");
     };
 
-    // Voeg de X-as en Y-as toe, lijn en punten
+    // Voeg de X-as en Y-as toe, lijn en punten en stijl de labels
     addAxis();
     addLine(tracks, "#F39C12", "duration");
     addPoints(tracks, "#F39C12", "duration");

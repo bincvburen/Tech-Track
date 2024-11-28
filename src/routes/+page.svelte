@@ -1,16 +1,21 @@
 <script>
+  ////////////////////////
+  // Basis Setup
+  ///////////////////////
+
   import Login from '../components/Login.svelte';
   import KeuzeMenu from '../components/KeuzeMenu.svelte';
-  import "../global.css"; // Importeer de globale CSS
+  import "../global.css"; 
 
-  let isLoggedIn = true; // Houd de inlogstatus bij
+  // Variabele om te controleren of de gebruiker is ingelogd
+  let isLoggedIn = true; 
 </script>
 
 <main>
   <!-- Login component -->
   <Login bind:isLoggedIn />
 
-  <!-- Alleen tonen als de gebruiker is ingelogd -->
+  <!-- Keuze opties en filters -->
   {#if isLoggedIn}
     <KeuzeMenu />
   {/if}

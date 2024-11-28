@@ -1,21 +1,38 @@
 <script>
+  ////////////////////////
+  // Basis Setup
+  ///////////////////////
+
+  // Importeren van Svelte functies en D3
+  // Importeren van fetchTracks en generateTrackLabel
   import { onMount } from "svelte";
   import * as d3 from "d3";
-  import { fetchTracks } from "../lib/fetch.js"; // Import de nieuwe functie
-  import { generateTrackLabel } from '../lib/utils.js'; // Pas het pad aan naar jouw projectstructuur
+  import { fetchTracks } from "../lib/fetch.js";
+  import { generateTrackLabel } from '../lib/utils.js';
 
+  // Exporteren van de variabelen. 
   export let trackType = "top";
   export let trackLimit = 20;
   export let trackTerm = "long_term";
 
+  // Variabele om de tracks in op te slaan
   let tracks = [];
-  let rotationInterval;
 
+  // Variabelen voor de rotatie van de afbeeldingen
+  let rotationInterval;
+  let rotationSpeed = 0.2;
+
+  // Indien het component geladen is, haal de tracks op en maak de grafiek
   onMount(async () => {
-    tracks = await fetchTracks(trackType, trackLimit, trackTerm); // Gebruik de geïmporteerde functie
+    tracks = await fetchTracks(trackType, trackLimit, trackTerm);
     createChart();
     window.addEventListener("resize", createChart);
   });
+
+
+  ////////////////////////
+  // Grafiek Aanmaken
+  ///////////////////////
 
   const createChart = () => {
     const width = innerWidth;
@@ -26,6 +43,7 @@
     const svg = d3.select("#bubble-chart").attr("width", width).attr("height", height);
     svg.selectAll("*").remove();
 
+    // Titel van de grafiek
     svg
       .append("text")
       .attr("x", centerX)
@@ -36,6 +54,7 @@
       .attr("font-weight", "bold")
       .text(() => generateTrackLabel(trackType, trackTerm, tracks.length));
 
+      // Maak een groep voor elke track
     const bubbles = svg
       .selectAll("g")
       .data(tracks)
@@ -44,17 +63,23 @@
       .on("mouseenter", (event, d) => handleMouseEnter(event, d))
       .on("mouseleave", (event, d) => handleMouseLeave(event, d));
 
+      // Voeg een cirkel toe aan de groep
     bubbles
       .append("circle")
       .attr("r", (d) => d.radius)
       .attr("fill", "#8D99AE");
 
+      // Voeg een clipPath toe aan de groep om de afbeelding bij te snijden
     bubbles
       .append("clipPath")
       .attr("id", (_, i) => `clip${i}`)
       .append("circle")
       .attr("r", (d) => d.radius);
 
+      // Voeg een afbeelding toe aan de groep
+      // Gebruik de clipPath om de afbeelding bij te snijden
+      // Voeg een click event toe om de track te openen in Spotify
+      // Start de rotatie van de afbeeldingen
     bubbles
       .append("image")
       .attr("x", (d) => -d.radius)
@@ -72,39 +97,42 @@
     startRotation(bubbles, centerX, centerY);
   };
 
+  // Hover effecten voor de bubbel
+  // Vergroot de bubbel en start de rotatie van de afbeelding
+  // Zet de helderheid van de afbeelding op 1
+  // Laat alle bubbels langzamer draaien om focus te leggen op de huidige bubbel
   const handleMouseEnter = (event, d) => {
     d3.select(event.currentTarget).select("circle").transition()
       .attr("r", d.radius * 1.2)
-      .duration(200);  // Vloeiende overgang naar een grotere bubbel
+      .duration(200); 
 
     d3.select(event.currentTarget).select("image")
-      // Start de rotatie van de afbeelding zelf met een lange duur
       .style("opacity", 1)
       .transition()
       .duration(20000)  // Duur van de rotatie
       .ease(d3.easeLinear)
       .attr("transform", "rotate(180)");
 
-    rotationSpeed = 0.005;  // Snellere rotatie van de banen tijdens hover
+    rotationSpeed = 0.005;
   };
   
 
+  // Omgekeerde van handleMouseEnter
   const handleMouseLeave = (event, d) => {
-    // Herstel de grootte van de bubbel
     d3.select(event.currentTarget).select("circle").transition().attr("r", d.radius);
 
-    // Herstel de rotatie van de afbeelding zelf
     d3.select(event.currentTarget).select("image").transition()
-      .duration(2000)  // Duur van de rotatie
+      .duration(2000)  
       .ease(d3.easeLinear)
-      .attr("transform", "rotate(-20)")  // Draai de afbeelding 180 graden
-      .style("opacity", 0.25);  // Verlaag de opacity om de afbeelding donkerder te maken
+      .attr("transform", "rotate(-20)") 
+      .style("opacity", 0.25);  
 
-    rotationSpeed = 0.2; // Snellere rotatie tijdens hover
+    rotationSpeed = 0.2; 
   };
 
-  let rotationSpeed = 0.2;
 
+  // Start de rotatie van de afbeeldingen en bereken de nieuwe positie van de afbeelding
+  // Gebruik de cosinus en sinus van de hoek om de cirkel te volgen, welke ik een kleine afwijking heb gegeven voor een speels effect
   const startRotation = (bubbles, centerX, centerY) => {
     const orbitRadiusX = innerWidth / 3;
     const orbitRadiusY = innerHeight / 4;
